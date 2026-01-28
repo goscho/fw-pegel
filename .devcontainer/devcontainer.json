@@ -1,0 +1,18 @@
+{
+  "name": "PHP 8.3 API with Slim",
+  "dockerFile": "Dockerfile",
+  "appPort": 80,
+  "extensions": [
+    "bmewburn.vscode-intelephense-client",
+    "xdebug.php-debug"
+  ],
+  "settings": {
+    "php.validate.executablePath": "/usr/local/bin/php",
+    "php.debug.executablePath": "/usr/local/bin/php"
+  },
+  "forwardPorts": [
+    80
+  ],
+  "postCreateCommand": "composer install && a2enmod rewrite && service apache2 restart",
+  "remoteUser": "vscode"
+}
