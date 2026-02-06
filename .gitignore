@@ -1,2 +1,5 @@
+# IntelliJ settings
+.idea
+
 # ignore 3rd party code istalled via composer
-vendor/
+/vendor
