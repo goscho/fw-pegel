@@ -1,33 +1,23 @@
 <?php
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
+declare(strict_types=1);
+
+use DI\Container;
+use DI\Bridge\Slim\Bridge;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$app = AppFactory::create();
+// Create DI Container
+$container = new Container();
+
+// Create App using PHP-DI bridge
+$app = Bridge::create($container);
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
 
-// Define routes
-$app->get('/', function (Request $request, Response $response) {
-    $response->getBody()->write(json_encode([
-        'message' => 'Welcome to Slim PHP API',
-        'status' => 'running'
-    ]));
-    return $response
-        ->withHeader('Content-Type', 'application/json');
-});
+// Register routes
+(require __DIR__ . '/../src/routes.php')($app);
 
-$app->get('/health', function (Request $request, Response $response) {
-    $response->getBody()->write(json_encode([
-        'status' => 'healthy',
-        'timestamp' => date('c')
-    ]));
-    return $response
-        ->withHeader('Content-Type', 'application/json');
-});
 
 $app->run();
