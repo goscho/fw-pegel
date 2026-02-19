@@ -1,14 +1,18 @@
 {
-  "name": "PHP 8.3 API with Slim",
+  "name": "PHP 8.5 API with Slim and PHP-DI",
   "dockerFile": "Dockerfile",
   "appPort": 80,
-  "extensions": [
-    "bmewburn.vscode-intelephense-client",
-    "xdebug.php-debug"
-  ],
-  "settings": {
-    "php.validate.executablePath": "/usr/local/bin/php",
-    "php.debug.executablePath": "/usr/local/bin/php"
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug"
+      ],
+      "settings": {
+        "php.validate.executablePath": "/usr/local/bin/php",
+        "php.debug.executablePath": "/usr/local/bin/php"
+      }
+    }
   },
   "forwardPorts": [
     80
