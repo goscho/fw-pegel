@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dev_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ..:/workspaces/php-api-slim:cached
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: devdb
+      DB_USER: devuser
+      DB_PASS: devpass
+
+  db:
+    image: mariadb:10.11
+    container_name: dev_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: devdb
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    container_name: dev_adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  mariadb_data:

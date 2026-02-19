@@ -1,7 +1,8 @@
 {
   "name": "PHP 8.5 API with Slim and PHP-DI",
-  "dockerFile": "Dockerfile",
-  "appPort": 80,
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "web",
+  "workspaceFolder": "/workspaces/php-api-slim",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -17,6 +18,6 @@
   "forwardPorts": [
     80
   ],
-  "postCreateCommand": "composer install && a2enmod rewrite && service apache2 restart",
+  "postCreateCommand": "composer install",
   "remoteUser": "vscode"
 }
