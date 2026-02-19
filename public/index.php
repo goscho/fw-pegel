@@ -8,7 +8,7 @@ use DI\Bridge\Slim\Bridge;
 require __DIR__ . '/../vendor/autoload.php';
 
 // Create DI Container
-$container = new Container();
+$container = require __DIR__ . '/../config/container.php';
 
 // Create App using PHP-DI bridge
 $app = Bridge::create($container);
