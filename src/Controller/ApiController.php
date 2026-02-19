@@ -17,7 +17,7 @@ class ApiController
 
     function getAll(Request $request, Response $response): Response
     {
-        $values = $this->pegelService->getAll();
+        $values = $this->pegelService->getLatest();
         $response->getBody()->write(json_encode($values));
         return $response->withHeader('Content-Type', 'application/json');
     }

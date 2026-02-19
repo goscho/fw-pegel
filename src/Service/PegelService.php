@@ -2,11 +2,17 @@
 
 namespace App\Service;
 
+use App\Repository\SensorRepository;
+
 class PegelService
 {
+    public function __construct(
+        private SensorRepository $sensorRepository
+    ) {}
 
-    public function getAll(): array
+
+    public function getLatest(): array
     {
-        return ["data" => ["value" => "Hello World from PegelSercice"]];
+        return $this->sensorRepository->getLatest(1);
     }
 }
