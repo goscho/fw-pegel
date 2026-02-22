@@ -2,6 +2,7 @@
 
 use DI\ContainerBuilder;
 use PDO;
+use Slim\Views\PhpRenderer;
 
 $builder = new ContainerBuilder();
 
@@ -23,6 +24,14 @@ $builder->addDefinitions([
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]
         );
+    },
+    PhpRenderer::class => function () {
+
+        $renderer = new PhpRenderer(__DIR__ . '/../src/view');
+
+        //$renderer->setLayout('layout.php');
+
+        return $renderer;
     }
 ]);
 

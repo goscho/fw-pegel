@@ -9,21 +9,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class ViewController
 {
 
-    function __construct() {}
+    function __construct(private \Slim\Views\PhpRenderer $renderer) {}
 
 
     function index(Request $request, Response $response): Response
     {
-        $content = $this->render('home');
-        $response->getBody()->write($content);
-        return $response->withHeader('Content-Type', 'text/html');
-    }
-
-    private function render(string $view, array $data = []): string
-    {
-        ob_start();
-        extract($data);
-        require __DIR__ . '/../view/' . $view . '.view.php';
-        return ob_get_clean();
+        return $this->renderer->render($response, 'home.view.php');
     }
 }
