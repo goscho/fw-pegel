@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Service\PegelService;
@@ -15,10 +17,11 @@ class ApiController
     ) {}
 
 
-    function getAll(Request $request, Response $response): Response
+    function getLatest(Request $request, Response $response): Response
     {
         $values = $this->pegelService->getLatest();
-        $response->getBody()->write(json_encode($values));
-        return $response->withHeader('Content-Type', 'application/json');
+        $result = ['data' => $values];
+        $response->getBody()->write(json_encode($result));
+        return $response;
     }
 }

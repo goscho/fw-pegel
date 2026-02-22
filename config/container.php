@@ -1,7 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 use DI\ContainerBuilder;
-use PDO;
 use Slim\Views\PhpRenderer;
 
 $builder = new ContainerBuilder();

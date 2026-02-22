@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Repository\SensorRepository;
 
 class PegelService
 {
+    private static $PEGEL_ID = 1;
+
     public function __construct(
         private SensorRepository $sensorRepository
     ) {}
@@ -13,6 +17,6 @@ class PegelService
 
     public function getLatest(): array
     {
-        return $this->sensorRepository->getLatest(1);
+        return $this->sensorRepository->getLatest(self::$PEGEL_ID);
     }
 }
