@@ -7,6 +7,9 @@ use DI\Bridge\Slim\Bridge;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 // Create DI Container
 $container = require __DIR__ . '/../config/container.php';
 

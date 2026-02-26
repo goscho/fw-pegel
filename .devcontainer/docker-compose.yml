@@ -10,11 +10,6 @@ services:
       - ..:/workspaces/php-api-slim:cached
     depends_on:
       - db
-    environment:
-      DB_HOST: db
-      DB_NAME: devdb
-      DB_USER: devuser
-      DB_PASS: devpass
 
   db:
     image: mariadb:10.11
