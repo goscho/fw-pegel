@@ -19,7 +19,13 @@ class SensorRepository
      */
     public function getLatest($sensorId): array
     {
-        $stmt = $this->pdo->prepare('SELECT value, recorded_at from sensor_data WHERE sensor_id = :sensorId ORDER BY recorded_at DESC LIMIT 1');
+        $sql = 'SELECT value, recorded_at 
+                FROM sensor_data 
+                WHERE sensor_id = :sensorId 
+                ORDER BY recorded_at DESC 
+                LIMIT 1';
+
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':sensorId', $sensorId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch();
