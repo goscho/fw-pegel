@@ -19,4 +19,9 @@ class PegelService
     {
         return $this->sensorRepository->getLatest(self::$PEGEL_ID);
     }
+
+    public function addValue(float $value, string $recordedAt): int
+    {
+        return $this->sensorRepository->save(self::$PEGEL_ID, $value, $recordedAt);
+    }
 }

@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Service\PegelService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Exception\HttpBadRequestException;
+use Slim\Exception\HttpInternalServerErrorException;
 
 
 class ApiController
@@ -23,5 +25,52 @@ class ApiController
         $result = ['data' => $values];
         $response->getBody()->write(json_encode($result));
         return $response;
+    }
+
+    function addValue(Request $request, Response $response): Response
+    {
+        $payload = $request->getParsedBody();
+
+        // Validate required fields
+        if (!isset($payload['value']) ) {
+            throw new HttpBadRequestException($request, 'Missing required field: value');
+        }
+        if (!isset($payload['recorded_at'])) {
+            throw new HttpBadRequestException($request, 'Missing required field: recorded_at');
+        }
+
+        // Validate value is numeric
+        if (!is_numeric($payload['value'])) {
+            throw new HttpBadRequestException($request, 'Field value must be numeric');
+        }
+
+        $value = (float)$payload['value'];
+
+        // Validate value range (0-5 meters for water level)
+        if ($value < 0 || $value > 5) {
+            throw new HttpBadRequestException($request, 'Field value must be between 0 and 5');
+        }
+
+        // Validate recorded_at format (ISO 8601 e.g. 2026-02-26T22:33:57.072Z)
+        $recordedAt = $payload['recorded_at'];
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/', $recordedAt)) {
+            throw new HttpBadRequestException($request, 'Field recorded_at must be ISO 8601 with Z (e.g. 2026-02-26T22:33:57.072Z)');
+        }
+
+        // Parse to DateTime and convert to database format
+        try {
+            $dateTime = new \DateTime($recordedAt);
+        } catch (\Exception $e) {
+            throw new HttpBadRequestException($request, 'Field recorded_at is not a valid datetime');
+        }
+
+        $recordedAt = $dateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+
+        try {
+            $this->pegelService->addValue($value, $recordedAt);
+            return $response->withStatus(201);
+        } catch (\Exception $e) {
+            throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage());
+        }
     }
 }

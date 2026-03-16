@@ -30,4 +30,27 @@ class SensorRepository
         $stmt->execute();
         return $stmt->fetch();
     }
+
+    /**
+     * Save a new sensor reading to the database.
+     *
+     * @param int $sensorId
+     * @param float $value
+     * @param string $recordedAt
+     * @return int Returns the ID of the inserted record
+     * @throws \PDOException on database errors
+     */
+    public function save(int $sensorId, float $value, string $recordedAt): int
+    {
+        $sql = 'INSERT INTO sensor_data (sensor_id, value, recorded_at) 
+                VALUES (:sensorId, :value, :recordedAt)';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':sensorId', $sensorId, PDO::PARAM_INT);
+        $stmt->bindValue(':value', $value, PDO::PARAM_STR);
+        $stmt->bindValue(':recordedAt', $recordedAt, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return (int)$this->pdo->lastInsertId();
+    }
 }

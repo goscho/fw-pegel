@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DI\Container;
 use DI\Bridge\Slim\Bridge;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -18,6 +17,9 @@ $app = Bridge::create($container);
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
+
+// Add body parsing middleware so JSON/form bodies are populated
+$app->addBodyParsingMiddleware();
 
 // Register routes
 (require __DIR__ . '/../src/routes.php')($app);
