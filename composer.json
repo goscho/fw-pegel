@@ -1,9 +1,9 @@
 {
-    "name": "ingoschock/php-api-slim",
-    "description": "REST API built with Slim Framework",
+    "name": "goscho/ff-pegel",
+    "description": "A simple API to store measurements",
     "type": "project",
     "require": {
-        "php": "^8.3",
+        "php": "^8.5",
         "php-di/php-di": "^7.1",
         "php-di/slim-bridge": "^3.4",
         "slim/php-view": "^3.4",
