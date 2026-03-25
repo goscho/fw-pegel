@@ -1,6 +1,6 @@
 {
-    "name": "goscho/ff-pegel",
-    "description": "A simple API to store measurements",
+    "name": "goscho/fw-pegel",
+    "description": "A simple API to store and retrieve measurements",
     "type": "project",
     "require": {
         "php": "^8.5",
