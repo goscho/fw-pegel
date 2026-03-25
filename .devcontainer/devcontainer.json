@@ -2,7 +2,7 @@
   "name": "PHP 8.5 API with Slim and PHP-DI",
   "dockerComposeFile": "docker-compose.yml",
   "service": "web",
-  "workspaceFolder": "/workspaces/php-api-slim",
+  "workspaceFolder": "/workspaces/fw-pegel",
   "customizations": {
     "vscode": {
       "extensions": [

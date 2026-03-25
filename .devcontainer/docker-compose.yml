@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ..:/workspaces/php-api-slim:cached
+      - ..:/workspaces/fw-pegel:cached
     depends_on:
       - db
 

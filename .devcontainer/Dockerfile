@@ -35,4 +35,4 @@ RUN chown -R vscode:www-data /var/www/html
 # Switch to non-root user
 USER vscode
 
-WORKDIR /workspaces/php-api-slim
+WORKDIR /workspaces/fw-pegel
