@@ -9,7 +9,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpInternalServerErrorException;
-
+use Slim\Exception\HttpNotFoundException;
+use TypeError;
 
 class ApiController
 {
@@ -21,7 +22,15 @@ class ApiController
 
     function getLatest(Request $request, Response $response): Response
     {
-        $values = $this->pegelService->getLatest();
+        $values = null;
+        try {
+            $values = $this->pegelService->getLatest();
+        } catch (TypeError $e) {
+            error_log('no data available for sensor: ' . $e->getMessage());
+            throw new HttpNotFoundException($request, 'No data found for the sensor');
+        } catch (\Exception $e) {
+            throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage(), $e);
+        }
         $result = ['data' => $values];
         $response->getBody()->write(json_encode($result));
         return $response;
@@ -32,7 +41,7 @@ class ApiController
         $payload = $request->getParsedBody();
 
         // Validate required fields
-        if (!isset($payload['value']) ) {
+        if (!isset($payload['value'])) {
             throw new HttpBadRequestException($request, 'Missing required field: value');
         }
         if (!isset($payload['recorded_at'])) {
