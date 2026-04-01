@@ -32,8 +32,9 @@ jobs:
           exclude: |
             **/.git*
             **/.git*/**
-            .devcontainer
-            .sql
-            .vscode
+            .devcontainer*/**
+            .sql*/**
+            .vscode*/**
+            .env.*
             README.md
             composer.*
