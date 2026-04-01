@@ -82,4 +82,58 @@ class ApiController
             throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage());
         }
     }
+
+    function getHistory(Request $request, Response $response): Response
+    {
+        $queryParams = $request->getQueryParams();
+
+        if (!isset($queryParams['from'])) {
+            throw new HttpBadRequestException($request, 'Missing required query parameter: from');
+        }
+        if (!isset($queryParams['to'])) {
+            throw new HttpBadRequestException($request, 'Missing required query parameter: to');
+        }
+
+        $from = $queryParams['from'];
+        $to = $queryParams['to'];
+
+        $iso8601Pattern = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/';
+
+        if (!preg_match($iso8601Pattern, $from)) {
+            throw new HttpBadRequestException($request, 'Parameter from must be ISO 8601 with Z (e.g. 2026-02-26T22:33:57.072Z)');
+        }
+        if (!preg_match($iso8601Pattern, $to)) {
+            throw new HttpBadRequestException($request, 'Parameter to must be ISO 8601 with Z (e.g. 2026-02-26T22:33:57.072Z)');
+        }
+
+        try {
+            $fromDateTime = new \DateTime($from);
+            $toDateTime = new \DateTime($to);
+        } catch (\Exception $e) {
+            throw new HttpBadRequestException($request, 'Invalid datetime value');
+        }
+
+        if ($fromDateTime >= $toDateTime) {
+            throw new HttpBadRequestException($request, 'Parameter from must be before to');
+        }
+
+        $fromDb = $fromDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $toDb = $toDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+
+        try {
+            $values = $this->pegelService->getHistory($fromDb, $toDb);
+        } catch (\Exception $e) {
+            throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage(), $e);
+        }
+
+        $values = array_map(function ($row) {
+            $row['recorded_at'] = (new \DateTime($row['recorded_at'], new \DateTimeZone('UTC')))
+                ->format('Y-m-d\TH:i:s\Z');
+            return $row;
+        }, $values);
+
+        $result = ['data' => $values];
+        $response->getBody()->write(json_encode($result));
+        return $response;
+    }
 }

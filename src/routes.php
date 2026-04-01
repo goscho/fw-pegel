@@ -16,6 +16,7 @@ return function (App $app): void {
     // API routes
     $app->group('/api', function (RouteCollectorProxy $group) {
         $group->get('/pegel', [ApiController::class, 'getLatest']);
+        $group->get('/pegel/history', [ApiController::class, 'getHistory']);
         $group->post('/pegel', [ApiController::class, 'addValue'])
             ->add(ValidateApiKeyHeader::class);
     })->add(AddJsonResponseHeader::class);
