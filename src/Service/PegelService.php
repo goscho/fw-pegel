@@ -24,4 +24,9 @@ class PegelService
     {
         return $this->sensorRepository->save(self::$PEGEL_ID, $value, $recordedAt);
     }
+
+    public function getHistory(string $from, string $to): array
+    {
+        return $this->sensorRepository->getByTimeframe(self::$PEGEL_ID, $from, $to);
+    }
 }
