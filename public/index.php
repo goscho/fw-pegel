@@ -16,7 +16,8 @@ $container = require __DIR__ . '/../config/container.php';
 $app = Bridge::create($container);
 
 // Add error middleware
-$app->addErrorMiddleware(true, true, true);
+$displayErrorDetails = $_ENV['ENVIRONMENT'] === 'DEVELOPMENT'; // Set to false in production
+$app->addErrorMiddleware($displayErrorDetails, true, true);
 
 // Add body parsing middleware so JSON/form bodies are populated
 $app->addBodyParsingMiddleware();
