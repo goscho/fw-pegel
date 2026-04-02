@@ -66,6 +66,7 @@
         <div class="gauge-status">
             <h2>Aktuelle Werte</h2>
             <p><strong>Hinweis:</strong> Bald können Sie hier den aktuellen Pegelstand der Murr in Murrhardt abrufen.</p>
+            <p>Sie finden den aktuellen Wasserstand der Murr auf der Webseite der <a href="https://fw-murrhardt.de/murrpegel/">Feuerwehr Murrhardt</a>.
         </div>
     </div>
 </body>
