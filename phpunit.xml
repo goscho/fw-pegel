@@ -15,11 +15,6 @@
     </testsuites>
 
     <php>
-        <env name="DB_HOST" value="db"/>
-        <env name="DB_NAME" value="devdb"/>
-        <env name="DB_USER" value="devuser"/>
-        <env name="DB_PASS" value="devpass"/>
-        <env name="API_KEY" value="test-api-key"/>
         <env name="ENVIRONMENT" value="TESTING"/>
     </php>
 

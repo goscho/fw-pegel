@@ -3,23 +3,86 @@ name: Test and Deploy via FTP
 on:
   push
 
+env:
+  DB_ROOT_PASSWORD: rootpass
+  DB_DATABASE: devdb
+  DB_USER: test
+  DB_PASSWORD: testpass
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_ROOT_HOST: '%'
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -p${DB_ROOT_PASSWORD}"
+          --health-interval=5s --health-timeout=2s --health-retries=10
+        ports:
+          - 3306
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run tests in devcontainer
-        uses: devcontainers/ci@v0.3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          runCmd: |
-            composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-            vendor/bin/phpunit
-            # copy outputs into the workspace for deployment
-            mkdir -p ./artifacts
-            cp -r config public src vendor ./artifacts
+          php-version: '8.5'
+          extensions: pdo pdo_mysql
+      
+      - name: Install deps
+        run: composer install --prefer-dist --optimize-autoloader --no-interaction
+      
+      - name: Copy .env file
+        run: cp .env.example .env
+
+      - name: Wait for MariaDB to be ready
+        env:
+          DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
+          ROOT_PASS: ${{ env.DB_ROOT_PASSWORD }}
+        run: |
+          echo "Waiting for DB on 127.0.0.1:$DB_PORT"
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P $DB_PORT -u root -p"$ROOT_PASS" >/dev/null 2>&1; then
+              echo "DB ready"; break
+            fi
+            sleep 2
+          done
+
+      - name: Run DB init script
+        env:
+          DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
+          ROOT_PASS: ${{ env.DB_ROOT_PASSWORD }}
+          DATABASE: ${{ env.DB_DATABASE }}
+        run: |
+          echo "Applying init SQL"
+          mysql --protocol=tcp -h 127.0.0.1 -P $DB_PORT -u root -p"$ROOT_PASS" -D $DATABASE < ./.sql/schema.sql
+
+      - name: Run PHPUnit
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: ${{ job.services.mariadb.ports['3306'] }}
+          DB_NAME: ${{ env.DB_DATABASE }}
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASS: ${{ env.DB_PASSWORD }}
+        run: vendor/bin/phpunit --configuration phpunit.xml
+
+      - name: Remove dev dependencies for production
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+      - name: Copy artifacts
+        run: |
+          mkdir -p ./artifacts
+          cp -r config public src vendor ./artifacts
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

@@ -8,7 +8,10 @@ use Tests\ApiTestCase;
 
 class PostValueTest extends ApiTestCase
 {
-    private const API_KEY = 'test-api-key';
+    private function getApiKey(): string
+    {
+        return $_ENV['API_KEY'] ?? getenv('API_KEY') ?: '';
+    }
 
     public function testCreatesValueWithValidApiKey(): void
     {
@@ -16,7 +19,7 @@ class PostValueTest extends ApiTestCase
             'value' => 2.5,
             'recorded_at' => '2026-01-01T12:00:00Z',
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(201, $response->getStatusCode());
@@ -55,7 +58,7 @@ class PostValueTest extends ApiTestCase
         $response = $this->post('/api/pegel', [
             'recorded_at' => '2026-01-01T12:00:00Z',
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -66,7 +69,7 @@ class PostValueTest extends ApiTestCase
         $response = $this->post('/api/pegel', [
             'value' => 2.5,
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -78,7 +81,7 @@ class PostValueTest extends ApiTestCase
             'value' => 'not-a-number',
             'recorded_at' => '2026-01-01T12:00:00Z',
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -90,7 +93,7 @@ class PostValueTest extends ApiTestCase
             'value' => 10.0,
             'recorded_at' => '2026-01-01T12:00:00Z',
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -102,7 +105,7 @@ class PostValueTest extends ApiTestCase
             'value' => 2.5,
             'recorded_at' => '2026-01-01',
         ], [
-            'X-API-Key' => self::API_KEY,
+            'X-API-Key' => $this->getApiKey(),
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
