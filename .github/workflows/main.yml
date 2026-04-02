@@ -1,27 +1,41 @@
-name: Deploy via FTP
+name: Test and Deploy via FTP
 
 on:
-  push:
-    branches:
-      - main
+  push
+
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.0
+      - name: Run tests in devcontainer
+        uses: devcontainers/ci@v0.3
         with:
-          php-version: '8.5'
-          extensions: pdo
-          tools: composer
+          runCmd: |
+            composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+            vendor/bin/phpunit
+            # copy outputs into the workspace for deployment
+            mkdir -p ./artifacts
+            cp -r config public src vendor ./artifacts
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-artifacts
+          path: ./artifacts
 
-      - name: Install dependencies
-        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: application-artifacts
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
