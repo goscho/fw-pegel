@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\PegelService;
+use App\Service\RainfallService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpBadRequestException;
@@ -12,11 +12,11 @@ use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Exception\HttpNotFoundException;
 use TypeError;
 
-class ApiController
+class RainfallApiController
 {
 
     function __construct(
-        private PegelService $pegelService
+        private RainfallService $rainfallService
     ) {}
 
 
@@ -24,7 +24,7 @@ class ApiController
     {
         $values = null;
         try {
-            $values = $this->pegelService->getLatest();
+            $values = $this->rainfallService->getLatest();
         } catch (TypeError $e) {
             error_log('no data available for sensor: ' . $e->getMessage());
             throw new HttpNotFoundException($request, 'No data found for the sensor');
@@ -76,7 +76,7 @@ class ApiController
         $recordedAt = $dateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
 
         try {
-            $this->pegelService->addValue($value, $recordedAt);
+            $this->rainfallService->addValue($value, $recordedAt);
             return $response->withStatus(201);
         } catch (\Exception $e) {
             throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage());
@@ -121,7 +121,7 @@ class ApiController
         $toDb = $toDateTime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
 
         try {
-            $values = $this->pegelService->getHistory($fromDb, $toDb);
+            $values = $this->rainfallService->getHistory($fromDb, $toDb);
         } catch (\Exception $e) {
             throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage(), $e);
         }

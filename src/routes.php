@@ -1,6 +1,7 @@
 <?php
 
-use App\Controller\ApiController;
+use App\Controller\PegelApiController;
+use App\Controller\RainfallApiController;
 use App\Controller\ViewController;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as RouteCollectorProxy;
@@ -15,9 +16,17 @@ return function (App $app): void {
 
     // API routes
     $app->group('/api', function (RouteCollectorProxy $group) {
-        $group->get('/pegel', [ApiController::class, 'getLatest']);
-        $group->get('/pegel/history', [ApiController::class, 'getHistory']);
-        $group->post('/pegel', [ApiController::class, 'addValue'])
+        // Pegel API routes
+        $group->get('/pegel', [PegelApiController::class, 'getLatest']);
+        $group->get('/pegel/history', [PegelApiController::class, 'getHistory']);
+        $group->post('/pegel', [PegelApiController::class, 'addValue'])
             ->add(ValidateApiKeyHeader::class);
+
+        // Rainfall API routes
+        $group->get('/rainfall', [RainfallApiController::class, 'getLatest']);
+        $group->get('/rainfall/history', [RainfallApiController::class, 'getHistory']);
+        $group->post('/rainfall', [RainfallApiController::class, 'addValue'])
+            ->add(ValidateApiKeyHeader::class);
+
     })->add(AddJsonResponseHeader::class);
 };
