@@ -31,6 +31,11 @@ class PegelApiController
         } catch (\Exception $e) {
             throw new HttpInternalServerErrorException($request, 'Database error: ' . $e->getMessage(), $e);
         }
+        if (isset($values['recorded_at'])) {
+            $values['recorded_at'] = (new \DateTime($values['recorded_at'], new \DateTimeZone('UTC')))
+                ->format('Y-m-d\TH:i:s\Z');
+        }
+
         $result = ['data' => $values];
         $response->getBody()->write(json_encode($result));
         return $response;
