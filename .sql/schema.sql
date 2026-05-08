@@ -9,7 +9,7 @@ CREATE TABLE sensor_metadata (
 CREATE TABLE sensor_data (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sensor_id TINYINT UNSIGNED NOT NULL REFERENCES sensor_metadata(sensor_id),
-    value DECIMAL(10, 2) NOT NULL,
+    value DECIMAL(12, 4) NOT NULL,
     recorded_at DATETIME,
     INDEX(sensor_id, recorded_at)
 );

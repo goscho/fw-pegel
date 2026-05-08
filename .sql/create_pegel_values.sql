@@ -24,11 +24,12 @@ BEGIN
     -- Loop from the start time to the end time
     WHILE v_current_timestamp <= v_end_timestamp DO
         -- Generate a random value in the range [0.1, 4.0]
-        SET v_random_value = ROUND(RAND() * (4.0 - 0.1) + 0.1, 2);
+        SET v_random_value = ROUND(RAND() * (4.0 - 0.1) + 0.1, 3);
 
         -- Insert the new data point
         INSERT INTO sensor_data (sensor_id, value, recorded_at)
-        VALUES (1, v_random_value, v_current_timestamp);
+        VALUES (1, v_random_value, v_current_timestamp),
+        (2, v_random_value * 5, v_current_timestamp);
 
         -- Increment the timestamp by 5 minutes for the next iteration
         SET v_current_timestamp = DATE_ADD(v_current_timestamp, INTERVAL 5 MINUTE);
