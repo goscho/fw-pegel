@@ -60,9 +60,9 @@ class RainfallApiController
 
         $value = (float)$payload['value'];
 
-        // Validate value range (0-5 meters for water level)
-        if ($value < 0 || $value > 5) {
-            throw new HttpBadRequestException($request, 'Field value must be between 0 and 5');
+        // Validate value to be a positive number
+        if ($value < 0 ) {
+            throw new HttpBadRequestException($request, 'Field value must be a positive number');
         }
 
         // Validate recorded_at format (ISO 8601 e.g. 2026-02-26T22:33:57.072Z)
