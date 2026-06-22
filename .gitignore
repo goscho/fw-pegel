@@ -1,5 +1,6 @@
 # IntelliJ settings
 .idea
+.phpunit.cache
 
 # ignore 3rd party code istalled via composer
 /vendor
